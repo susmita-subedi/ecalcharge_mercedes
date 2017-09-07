@@ -10,7 +10,7 @@
         android:id="@+id/soc_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Check Battey Level"
+        android:text="Find SOC"
         android:layout_alignParentStart="true" />
 
     <TextView
@@ -26,10 +26,9 @@
         android:id="@+id/charge_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:text="Turn On"
         android:layout_below="@+id/soc_textView"
-        android:layout_marginTop="34dp"
-        android:text="Turn On" />
+        android:layout_alignParentStart="true"/>
 <RadioGroup
     android:id="@+id/radioGroup"
     android:layout_width="wrap_content"
@@ -51,7 +50,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/immediate_rb"
         android:layout_marginTop="20dp"
-        android:text="Smart Charging" />
+        android:text="Scheduled Charging" />
 
     <RadioButton
         android:id="@+id/scheduled_rb"
@@ -60,7 +59,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/smart_rb"
         android:layout_marginTop="29dp"
-        android:text="Scheduled Charging" />
+        android:text="Smart Charging" />
 </RadioGroup>
 
     <TextView
@@ -70,9 +69,9 @@
         android:layout_alignEnd="@+id/charge_button"
         android:layout_below="@+id/radioGroup"
         android:layout_marginEnd="13dp"
-        android:text="Time estimated" />
+        android:text="Time estimated"
+        android:visibility="gone"/>
     <!--android:visibility="gone"-->
-
 
 
 </RelativeLayout>

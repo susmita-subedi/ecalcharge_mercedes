@@ -9,3 +9,10 @@
 .externalNativeBuild
 .idea
 gradle
+<<<<<<< HEAD
+=======
+build.gradle
+/app/build
+/app/build.gradle
+/app/proguard-rules.pro
+>>>>>>> af5ab88fa57d4fafded2e0d7a4c06fc4776050be

@@ -35,11 +35,12 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
     Button socButton;
     @BindView(R.id.soc_textView)
     TextView socTextView;
-    //    @BindView(R.id.charge_button)
-//    Button chargeButton;
+    @BindView(R.id.charge_button)
+    Button chargeButton;
     boolean charging;
     @BindView(R.id.time_textView)
     TextView timeTextView;
+    private RadioGroup radioGroup;
     private float time;
 
     @Override
@@ -63,12 +64,13 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
         });
         broadcaster.setListener(this);
         downloadCertificate();
-//        chargeButton.setOnClickListener(view -> startCharging());
+        chargeButton.setOnClickListener(view -> startCharging());
         socButton.setOnClickListener(view -> findSoc());
-        RadioGroup radioGroup = findViewById(R.id.radioGroup);
+        radioGroup = findViewById(R.id.radioGroup);
         radioGroup.clearCheck();
-        radioGroup.setOnCheckedChangeListener(this::selectChargingOptions);
-        findEstimatedChargingTime();
+        radioGroup.setOnCheckedChangeListener((radioGroup1, i) -> {
+            selectChargingOptions(radioGroup1, i);
+        });
     }
 
 
@@ -115,6 +117,8 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
 
     @Override
     public void onStateChanged(Link link, Link.State state) {
+        if (link.getState() == Link.State.AUTHENTICATED) {
+        }
     }
 
     @Override
@@ -131,6 +135,7 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
     }
 
     public float findSoc() {
+
         final Telematics telematics = Manager.getInstance().getTelematics();
         byte[] command = Command.Charging.getChargeState();
         telematics.sendCommand(command, vehicleSerial, new Telematics.CommandCallback() {
@@ -158,14 +163,29 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
     public void startCharging() {
         byte[] command;
         final Telematics telematics = Manager.getInstance().getTelematics();
-        command = Command.Charging.startCharging(true);
+        if (charging) {
+            command = Command.Charging.startCharging(false);
+        }
+        //                byte[] command = Command.Charging.getChargeState();
+        else {
+            command = Command.Charging.startCharging(true);
+        }
+//        command = Command.Charging.startCharging(true);
         telematics.sendCommand(command, vehicleSerial, new Telematics.CommandCallback() {
             @Override
             public void onCommandResponse(byte[] bytes) {
                 try {
                     IncomingCommand incomingCommand = IncomingCommand.create(bytes);
                     ChargeState chargeState = (ChargeState) incomingCommand;
-                    charging = !(String.valueOf(chargeState.getChargingState())).equals("DISCONNECTED");
+//                    socTextView.setText(String.valueOf(chargeState.getChargingState()));
+                    if ((String.valueOf(chargeState.getChargingState())).equals("DISCONNECTED")) {
+                        charging = false;
+                        chargeButton.setText("Turn On");
+
+                    } else {
+                        charging = true;
+                        chargeButton.setText("Turn Off");
+                    }
 
                 } catch (CommandParseException e) {
                     e.printStackTrace();
@@ -175,6 +195,7 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
             @Override
             public void onCommandFailed(TelematicsError telematicsError) {
             }
+
         });
     }
 
@@ -198,9 +219,12 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
     }
 
     public void immediateCharging() {
+//        socTextView.setText("0");
         startCharging();
-        float timeToCharge = findEstimatedChargingTime();
-        timeTextView.setText(String.valueOf(timeToCharge));
+//        float timeToCharge = findEstimatedChargingTime();
+//        socTextView.setText(String.valueOf(timeToCharge));
+        float timeToCharge = findSoc();
+//        timeTextView.setText(String.valueOf(timeToCharge));
     }
 
     public void smartCharging() {
