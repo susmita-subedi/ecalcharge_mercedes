@@ -10,8 +10,6 @@
 .idea
 gradle
 build.gradle
-Ecalcharge_mercedez_android.iml
 /app/build
-/app/app.iml
 /app/build.gradle
 /app/proguard-rules.pro
