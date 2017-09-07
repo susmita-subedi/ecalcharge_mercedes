@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.android.susmita.ecalcharge_mercedez_android.MainActivity">
+
+    <Button
+        android:id="@+id/soc_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check Battey Level"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/soc_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="Your SOC"
+        android:layout_below="@+id/soc_button"
+        android:layout_alignParentStart="true"/>
+
+    <Button
+        android:id="@+id/charge_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/soc_textView"
+        android:layout_marginTop="34dp"
+        android:text="Turn On" />
+<RadioGroup
+    android:id="@+id/radioGroup"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/charge_button">
+    <RadioButton
+        android:id="@+id/immediate_rb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/charge_button"
+        android:layout_marginTop="28dp"
+        android:text="Charge Immediately" />
+
+    <RadioButton
+        android:id="@+id/smart_rb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/immediate_rb"
+        android:layout_marginTop="20dp"
+        android:text="Smart Charging" />
+
+    <RadioButton
+        android:id="@+id/scheduled_rb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/smart_rb"
+        android:layout_marginTop="29dp"
+        android:text="Scheduled Charging" />
+</RadioGroup>
+
+    <TextView
+        android:id="@+id/time_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/charge_button"
+        android:layout_below="@+id/radioGroup"
+        android:layout_marginEnd="13dp"
+        android:text="Time estimated" />
+    <!--android:visibility="gone"-->
+
+
+
+</RelativeLayout>
