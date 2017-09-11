@@ -3,33 +3,25 @@ package com.android.susmita.ecalcharge_mercedez_android;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-
-import com.highmobility.hmkit.Broadcaster;
-import com.highmobility.hmkit.BroadcasterListener;
 import com.highmobility.hmkit.Command.Command;
 import com.highmobility.hmkit.Command.CommandParseException;
 import com.highmobility.hmkit.Command.Incoming.ChargeState;
 import com.highmobility.hmkit.Command.Incoming.IncomingCommand;
-import com.highmobility.hmkit.ConnectedLink;
-import com.highmobility.hmkit.ConnectedLinkListener;
-import com.highmobility.hmkit.Error.BroadcastError;
 import com.highmobility.hmkit.Error.DownloadAccessCertificateError;
 import com.highmobility.hmkit.Error.TelematicsError;
-import com.highmobility.hmkit.Link;
 import com.highmobility.hmkit.Manager;
 import com.highmobility.hmkit.Telematics;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends Activity implements BroadcasterListener, ConnectedLinkListener {
+public class MainActivity extends Activity {
     static String TAG = "MainActivity";
-    Broadcaster broadcaster;
-    ConnectedLink link;
     byte[] vehicleSerial;
     @BindView(R.id.soc_button)
     Button socButton;
@@ -40,7 +32,10 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
     boolean charging;
     @BindView(R.id.time_textView)
     TextView timeTextView;
-    private RadioGroup radioGroup;
+    @BindView(R.id.immediate_tv)
+    TextView immediateTv;
+    @BindView(R.id.scheduled_tv)
+    TextView scheduledTv;
     private float time;
 
     @Override
@@ -49,28 +44,12 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         getInstance();
-        broadcaster = Manager.getInstance().getBroadcaster();
-        broadcaster.startBroadcasting(new Broadcaster.StartCallback() {
-            @Override
-            public void onBroadcastingStarted() {
-                Log.d(TAG, "onBroadcastingStarted: ");
-            }
-
-            @Override
-            public void onBroadcastingFailed(BroadcastError broadcastError) {
-                Log.d(TAG, "onBroadcastingStarted: " + broadcastError.getType() + broadcastError.getMessage());
-            }
-
-        });
-        broadcaster.setListener(this);
         downloadCertificate();
         chargeButton.setOnClickListener(view -> startCharging());
         socButton.setOnClickListener(view -> findSoc());
-        radioGroup = findViewById(R.id.radioGroup);
+        RadioGroup radioGroup = findViewById(R.id.radioGroup);
         radioGroup.clearCheck();
-        radioGroup.setOnCheckedChangeListener((radioGroup1, i) -> {
-            selectChargingOptions(radioGroup1, i);
-        });
+        radioGroup.setOnCheckedChangeListener(this::selectChargingOptions);
     }
 
 
@@ -89,42 +68,6 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
         });
     }
 
-    @Override
-    public void onStateChanged(Broadcaster.State state) {
-        Log.d(TAG, "onStateChanged: " + state);
-    }
-
-    @Override
-    public void onLinkReceived(ConnectedLink connectedLink) {
-        link = connectedLink;
-        link.setListener(this);
-    }
-
-    @Override
-    public void onLinkLost(ConnectedLink connectedLink) {
-        link.setListener(null);
-
-    }
-
-    @Override
-    public void onAuthorizationRequested(ConnectedLink connectedLink, AuthorizationCallback authorizationCallback) {
-        authorizationCallback.approve();
-    }
-
-    @Override
-    public void onAuthorizationTimeout(ConnectedLink connectedLink) {
-    }
-
-    @Override
-    public void onStateChanged(Link link, Link.State state) {
-        if (link.getState() == Link.State.AUTHENTICATED) {
-        }
-    }
-
-    @Override
-    public void onCommandReceived(Link link, byte[] bytes) {
-    }
-
     public void getInstance() {
         Manager.getInstance().initialize(
                 "dGVzdDzJFTy4zTnBNmCoyaefikxfOZDIjH8dydaPdoEqvSt4FHxIJRRIZ9fNwhCzJbujOeZEdgLCdvl4IvMzPJ5poR8kugiDyqBEiKPnn+PcNPFWI9akQFYwQC5Yd7aqxhl+/zA/4fMUUYipZTZPqRvaN2r888dzpTg7Dml/o6x2BXffbSX6gvHGPIIvcK5xpZ6dDEMUSwVj",
@@ -135,7 +78,6 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
     }
 
     public float findSoc() {
-
         final Telematics telematics = Manager.getInstance().getTelematics();
         byte[] command = Command.Charging.getChargeState();
         telematics.sendCommand(command, vehicleSerial, new Telematics.CommandCallback() {
@@ -166,11 +108,11 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
         if (charging) {
             command = Command.Charging.startCharging(false);
         }
-        //                byte[] command = Command.Charging.getChargeState();
         else {
             command = Command.Charging.startCharging(true);
+
         }
-//        command = Command.Charging.startCharging(true);
+
         telematics.sendCommand(command, vehicleSerial, new Telematics.CommandCallback() {
             @Override
             public void onCommandResponse(byte[] bytes) {
@@ -180,11 +122,13 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
 //                    socTextView.setText(String.valueOf(chargeState.getChargingState()));
                     if ((String.valueOf(chargeState.getChargingState())).equals("DISCONNECTED")) {
                         charging = false;
-                        chargeButton.setText("Turn On");
+                        chargeButton.setText(R.string.turn_on);
+                        timeTextView.setVisibility(View.GONE);
 
                     } else {
                         charging = true;
-                        chargeButton.setText("Turn Off");
+                        chargeButton.setText(R.string.turn_off);
+                        findEstimatedChargingTime();
                     }
 
                 } catch (CommandParseException e) {
@@ -202,40 +146,46 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
     public void selectChargingOptions(RadioGroup radioGroup1, int i) {
         RadioButton rb = radioGroup1.findViewById(i);
         int index = radioGroup1.indexOfChild(rb);
+        Log.d(TAG, String.valueOf(index));
         switch (index) {
             case 0: {
                 immediateCharging();
-                break;
-            }
-            case 1: {
-                smartCharging();
                 break;
             }
             case 2: {
                 scheduledCharging();
                 break;
             }
+            case 4: {
+                smartCharging();
+                break;
+            }
         }
     }
 
     public void immediateCharging() {
-//        socTextView.setText("0");
         startCharging();
+        immediateTv.setVisibility(View.VISIBLE);
+        scheduledTv.setVisibility(View.GONE);
 //        float timeToCharge = findEstimatedChargingTime();
 //        socTextView.setText(String.valueOf(timeToCharge));
         float timeToCharge = findSoc();
 //        timeTextView.setText(String.valueOf(timeToCharge));
     }
 
-    public void smartCharging() {
-        socTextView.setText("1");
+    public void scheduledCharging() {
+        immediateTv.setVisibility(View.GONE);
+        scheduledTv.setVisibility(View.VISIBLE);
+        Log.d(TAG, "scheduled");
     }
 
-    public void scheduledCharging() {
-        socTextView.setText("2");
+    public void smartCharging() {
+        Log.d(TAG, "smart");
     }
+
 
     public float findEstimatedChargingTime() {
+        timeTextView.setVisibility(View.VISIBLE);
         Log.d(TAG, "findestimate called");
         final Telematics telematics = Manager.getInstance().getTelematics();
         byte[] command = Command.Charging.getChargeState();
@@ -250,7 +200,8 @@ public class MainActivity extends Activity implements BroadcasterListener, Conne
                         ChargeState state = (ChargeState) incomingCommand;
                         Log.d(TAG, "Time: " + state.getTimeToCompleteCharge());
                         time = state.getTimeToCompleteCharge();
-                        socTextView.setText(String.valueOf(time));
+//                        timeTextView.setText(String.valueOf(time));
+                        timeTextView.setText("The estimated time to complete charging is: "+ String.valueOf(time)+" minutes");
                     }
                 } catch (CommandParseException e) {
                     Log.e(TAG, e.getLocalizedMessage());
