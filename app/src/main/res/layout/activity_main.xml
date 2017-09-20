@@ -71,7 +71,8 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/scheduled_rb"
             android:visibility="gone"
-            android:text="@string/start_time"/>
+            android:inputType="time"
+            android:hint="@string/start_time"/>
         <EditText
             android:id="@+id/scheduled_tv2"
             android:layout_width="wrap_content"
@@ -79,7 +80,16 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/scheduled_tv"
             android:visibility="gone"
-            android:text="@string/end_time"/>
+            android:inputType="time"
+            android:hint="@string/end_time"/>
+       <Button
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/scheduled_tv2"
+           android:layout_gravity="center"
+           android:visibility="gone"
+           android:id="@+id/scheduled_btn"
+           android:text="Submit"/>
 
         <RadioButton
             android:id="@+id/smart_rb"

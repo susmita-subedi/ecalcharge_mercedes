@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.highmobility.hmkit.Command.Command;
 import com.highmobility.hmkit.Command.CommandParseException;
 import com.highmobility.hmkit.Command.Incoming.ChargeState;
@@ -36,7 +38,11 @@ public class MainActivity extends Activity {
     TextView immediateTv;
     @BindView(R.id.scheduled_tv)
     TextView scheduledTv;
+    @BindView(R.id.scheduled_tv2)
+    TextView scheduledTv2;
     private float time;
+    @BindView(R.id.scheduled_btn)
+    Button scheduledBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +56,7 @@ public class MainActivity extends Activity {
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         radioGroup.clearCheck();
         radioGroup.setOnCheckedChangeListener(this::selectChargingOptions);
+        scheduledBtn.setOnClickListener(view -> Toast.makeText(getBaseContext(),"Submit",Toast.LENGTH_SHORT).show());
     }
 
 
@@ -167,21 +174,22 @@ public class MainActivity extends Activity {
         startCharging();
         immediateTv.setVisibility(View.VISIBLE);
         scheduledTv.setVisibility(View.GONE);
-//        float timeToCharge = findEstimatedChargingTime();
-//        socTextView.setText(String.valueOf(timeToCharge));
-        float timeToCharge = findSoc();
-//        timeTextView.setText(String.valueOf(timeToCharge));
+        scheduledTv2.setVisibility(View.GONE);
+        scheduledBtn.setVisibility(View.GONE);
     }
 
     public void scheduledCharging() {
         immediateTv.setVisibility(View.GONE);
         scheduledTv.setVisibility(View.VISIBLE);
+        scheduledTv2.setVisibility(View.VISIBLE);
+        scheduledBtn.setVisibility(View.VISIBLE);
         Log.d(TAG, "scheduled");
     }
 
     public void smartCharging() {
         Log.d(TAG, "smart");
     }
+
 
 
     public float findEstimatedChargingTime() {
@@ -200,12 +208,11 @@ public class MainActivity extends Activity {
                         ChargeState state = (ChargeState) incomingCommand;
                         Log.d(TAG, "Time: " + state.getTimeToCompleteCharge());
                         time = state.getTimeToCompleteCharge();
-//                        timeTextView.setText(String.valueOf(time));
                         timeTextView.setText("The estimated time to complete charging is: "+ String.valueOf(time)+" minutes");
                     }
                 } catch (CommandParseException e) {
                     Log.e(TAG, e.getLocalizedMessage());
-                    Log.d(TAG, "SOrry");
+                    Log.d(TAG, "Sorry");
                 }
                 Log.d(TAG, "tried");
             }
