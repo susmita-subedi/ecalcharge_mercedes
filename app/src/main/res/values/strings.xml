@@ -11,4 +11,7 @@
     <string name="start_time">Enter start time</string>
     <string name="end_time">Enter end time</string>
     <string name="turn_off">Turn Off</string>
+    <string name="car_owner">Car Owner</string>
+    <string name="fleet_manager">Fleet Manager</string>
+    <string name="your_fleet_status">Your fleet status:</string>
 </resources>
