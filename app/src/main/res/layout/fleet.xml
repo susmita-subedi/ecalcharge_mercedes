@@ -4,11 +4,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="1">
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="10dp">
 
     <TextView
         android:id="@+id/fleetStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/your_fleet_status"/>
+    <TextView
+        android:id="@+id/car1"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/fleetStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/car1"/>
+
+    <TextView
+        android:id="@+id/car2"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/car1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/car2"/>
+    <TextView
+        android:id="@+id/car3"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/car2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/car3"/>
+
+    <TextView
+        android:id="@+id/car1soc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/car2"
+        android:layout_alignTop="@+id/car1"/>
+
+    <TextView
+        android:id="@+id/car2soc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/car2"
+        android:layout_toEndOf="@+id/car2"
+        />
+
+    <TextView
+        android:id="@+id/car3soc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/car3"
+        android:layout_toEndOf="@+id/car3"
+        />
 </RelativeLayout>

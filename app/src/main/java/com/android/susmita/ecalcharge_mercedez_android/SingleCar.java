@@ -83,8 +83,8 @@ public class SingleCar extends Activity {
 
     public void getInstance() {
         Manager.getInstance().initialize(
-                "dGVzdDzJFTy4zTnBNmCoyaefikxfOZDIjH8dydaPdoEqvSt4FHxIJRRIZ9fNwhCzJbujOeZEdgLCdvl4IvMzPJ5poR8kugiDyqBEiKPnn+PcNPFWI9akQFYwQC5Yd7aqxhl+/zA/4fMUUYipZTZPqRvaN2r888dzpTg7Dml/o6x2BXffbSX6gvHGPIIvcK5xpZ6dDEMUSwVj",
-                "Y+dblf8NYzYzUn2ZGERMtf+FKx6xD7/pmTHqMxGwSN0=",
+                "dGVzdDzJFTy4zTnBNmCoyXGqO65YY+4JFpdYA0aJvRB4zyjrOHTLFb3VB2SLvvOStdRi0hXEjv5dJ1zBZXne7HEEFB/hnHaTFMTB/sdm5yoQREJgdt9osCwgLiwWdsmQ0f2G5MgYK8URdbxiAiZNVK14G28BCB0ITmsIkZAEmcbCRGZeN2aLBMc8FoPxvPdpEybJKaXSCGnd",
+                "bMrg2kovov8xOKpC7HAsxAWx4fxcPyysj+9Y6XvOGZE=",
                 "mtgEqamle56rOE2oKVyh3IJ/5hmOhEyhT/I8yEuJ+MWAUhWR4qYR6TLPQTxJ1amdgApRLCXL/RJyaA0PDJaxEw==",
                 getApplicationContext()
         );
@@ -153,6 +153,7 @@ public class SingleCar extends Activity {
 
         });
     }
+
 
     public void selectChargingOptions(RadioGroup radioGroup1, int i) {
         RadioButton rb = radioGroup1.findViewById(i);

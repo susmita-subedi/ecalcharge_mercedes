@@ -14,4 +14,7 @@
     <string name="car_owner">Car Owner</string>
     <string name="fleet_manager">Fleet Manager</string>
     <string name="your_fleet_status">Your fleet status:</string>
+    <string name="car1">"Car1: "</string>
+    <string name="car2">"Car2: "</string>
+    <string name="car3">"Car3: "</string>
 </resources>
