@@ -20,6 +20,12 @@ import com.highmobility.hmkit.Error.TelematicsError;
 import com.highmobility.hmkit.Manager;
 import com.highmobility.hmkit.Telematics;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Timer;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -42,13 +48,14 @@ public class SingleCar extends Activity {
     TextView timeTextView;
     @BindView(R.id.immediate_tv)
     TextView immediateTv;
-    @BindView(R.id.scheduled_tv)
-    TextView scheduledTv;
-    @BindView(R.id.scheduled_tv2)
-    TextView scheduledTv2;
+    @BindView(R.id.scheduled_startEt)
+    TextView scheduledStartEt;
+    @BindView(R.id.scheduled_endEt)
+    TextView scheduledEndEt;
     @BindView(R.id.scheduled_btn)
     Button scheduledBtn;
     private float time;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,8 +69,7 @@ public class SingleCar extends Activity {
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         radioGroup.clearCheck();
         radioGroup.setOnCheckedChangeListener(this::selectChargingOptions);
-        scheduledBtn.setOnClickListener(view -> Toast.makeText(getBaseContext(), "Submit", Toast.LENGTH_SHORT).show());
-
+        scheduledBtn.setOnClickListener(view->startScheduledCharging());
     }
 
     private void downloadCertificate() {
@@ -116,6 +122,8 @@ public class SingleCar extends Activity {
     }
 
     public void startCharging() {
+        Log.d(TAG, "startCharging() called at time = " + new Date().toString());
+
         byte[] command;
         final Telematics telematics = Manager.getInstance().getTelematics();
         if (charging) {
@@ -178,17 +186,66 @@ public class SingleCar extends Activity {
     public void immediateCharging() {
         startCharging();
         immediateTv.setVisibility(View.VISIBLE);
-        scheduledTv.setVisibility(View.GONE);
-        scheduledTv2.setVisibility(View.GONE);
+        scheduledStartEt.setVisibility(View.GONE);
+        scheduledEndEt.setVisibility(View.GONE);
         scheduledBtn.setVisibility(View.GONE);
     }
 
     public void scheduledCharging() {
         immediateTv.setVisibility(View.GONE);
-        scheduledTv.setVisibility(View.VISIBLE);
-        scheduledTv2.setVisibility(View.VISIBLE);
+        scheduledStartEt.setVisibility(View.VISIBLE);
+        scheduledEndEt.setVisibility(View.VISIBLE);
         scheduledBtn.setVisibility(View.VISIBLE);
         Log.d(TAG, "scheduled");
+    }
+    public void startScheduledCharging(){
+        Log.d(TAG, "startTime");
+        String startTime = scheduledStartEt.getText().toString();
+        String endTime = scheduledEndEt.getText().toString();
+        Log.d(TAG, startTime +" " + endTime);
+
+
+        Date currDate = new Date();
+
+        String[] st_time = startTime.split(":");
+        String[] end_time = endTime.split(":");
+
+        String st_HH = st_time[0];
+        String st_mm = st_time[1];
+
+        String end_HH = end_time[0];
+        String end_mm = end_time[1];
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String stCurrDate = sdf.format(currDate);
+        String formatDtTm = "yyyy-MM-dd HH:mm";
+        String startDtTm = stCurrDate + " " + st_HH + ":" + st_mm;
+        String stopDtTm = stCurrDate + " " + end_HH + ":" + end_mm;;
+        Log.d(TAG, "startDtTm = " + startDtTm +" - stopDtTm = " + stopDtTm);
+
+        DateFormat dateFormatter = new SimpleDateFormat(formatDtTm);
+        Date dtStart = null;
+        try {
+            dtStart = dateFormatter.parse(startDtTm);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Date dtStop = null;
+        try {
+            dtStop = dateFormatter.parse(stopDtTm);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // Now create the timer for StartCahrging and StopCharging
+        Timer startTimer = new Timer();
+        Timer stopTimer = new Timer();
+
+        // Create the EVChargingTask
+        EVChargingTask evChargingTaskStart = new EVChargingTask(this, startTimer, stopTimer, true);
+        EVChargingTask evChargingTaskStop = new EVChargingTask(this, startTimer, stopTimer, false);
+
+        // Schedule the task
+        startTimer.schedule(evChargingTaskStart, dtStart);
+        startTimer.schedule(evChargingTaskStop, dtStop);
     }
 
     public void smartCharging() {
