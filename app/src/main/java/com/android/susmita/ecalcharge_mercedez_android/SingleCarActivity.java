@@ -64,7 +64,7 @@ public class SingleCarActivity extends Activity {
     EditText smartDepartureEt;
     private float time;
     float soc;
-//    TimePicker timePicker1 = (TimePicker) findViewById(R.id.timePicker1);
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +72,8 @@ public class SingleCarActivity extends Activity {
         ButterKnife.bind(this);
         getInstance();
         downloadCertificate();
-//        timePicker1.setIs24HourView(true);
+        TimePicker timePicker1 = (TimePicker) findViewById(R.id.timePicker1);
+        timePicker1.setIs24HourView(true);
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         radioGroup.clearCheck();
         switchButton.setOnCheckedChangeListener((cb, isChecked) -> {
@@ -123,7 +124,8 @@ public class SingleCarActivity extends Activity {
 
 
     public float findSoc() {
-
+        GetApxData apx = new GetApxData();
+        apx.printAPXdata(apx.getAPXdata("1dSyhVOt8sEpmopzNe-Vo5Fm-qIJX1Fa5E-HAZOFodj0","08/19/2017"));
         final Telematics telematics = Manager.getInstance().getTelematics();
         byte[] command = Command.Charging.getChargeState();
         telematics.sendCommand(command, vehicleSerial, new Telematics.CommandCallback() {
