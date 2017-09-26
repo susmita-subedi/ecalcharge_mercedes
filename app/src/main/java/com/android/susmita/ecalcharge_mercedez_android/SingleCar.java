@@ -6,10 +6,10 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.highmobility.hmkit.Command.Command;
 import com.highmobility.hmkit.Command.CommandParseException;
@@ -49,12 +49,17 @@ public class SingleCar extends Activity {
     @BindView(R.id.immediate_tv)
     TextView immediateTv;
     @BindView(R.id.scheduled_startEt)
-    TextView scheduledStartEt;
+    EditText scheduledStartEt;
     @BindView(R.id.scheduled_endEt)
-    TextView scheduledEndEt;
+    EditText scheduledEndEt;
     @BindView(R.id.scheduled_btn)
     Button scheduledBtn;
+    @BindView(R.id.smart_btn)
+    Button smartBtn;
+    @BindView(R.id.smart_et)
+    EditText smartDepartureEt;
     private float time;
+    static final int SOCMin = 35;
 
 
     @Override
@@ -69,7 +74,8 @@ public class SingleCar extends Activity {
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         radioGroup.clearCheck();
         radioGroup.setOnCheckedChangeListener(this::selectChargingOptions);
-        scheduledBtn.setOnClickListener(view->startScheduledCharging());
+
+        smartBtn.setOnClickListener(view -> startSmartCharging());
     }
 
     private void downloadCertificate() {
@@ -123,7 +129,6 @@ public class SingleCar extends Activity {
 
     public void startCharging() {
         Log.d(TAG, "startCharging() called at time = " + new Date().toString());
-
         byte[] command;
         final Telematics telematics = Manager.getInstance().getTelematics();
         if (charging) {
@@ -176,7 +181,7 @@ public class SingleCar extends Activity {
                 scheduledCharging();
                 break;
             }
-            case 4: {
+            case 6: {
                 smartCharging();
                 break;
             }
@@ -197,31 +202,28 @@ public class SingleCar extends Activity {
         scheduledEndEt.setVisibility(View.VISIBLE);
         scheduledBtn.setVisibility(View.VISIBLE);
         Log.d(TAG, "scheduled");
+        scheduledBtn.setOnClickListener(view -> startScheduledCharging());
     }
-    public void startScheduledCharging(){
+
+    public void startScheduledCharging() {
         Log.d(TAG, "startTime");
         String startTime = scheduledStartEt.getText().toString();
         String endTime = scheduledEndEt.getText().toString();
-        Log.d(TAG, startTime +" " + endTime);
-
-
+        Log.d(TAG, startTime + " " + endTime);
         Date currDate = new Date();
-
         String[] st_time = startTime.split(":");
         String[] end_time = endTime.split(":");
-
         String st_HH = st_time[0];
         String st_mm = st_time[1];
-
         String end_HH = end_time[0];
         String end_mm = end_time[1];
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String stCurrDate = sdf.format(currDate);
         String formatDtTm = "yyyy-MM-dd HH:mm";
         String startDtTm = stCurrDate + " " + st_HH + ":" + st_mm;
-        String stopDtTm = stCurrDate + " " + end_HH + ":" + end_mm;;
-        Log.d(TAG, "startDtTm = " + startDtTm +" - stopDtTm = " + stopDtTm);
-
+        String stopDtTm = stCurrDate + " " + end_HH + ":" + end_mm;
+        ;
+        Log.d(TAG, "startDtTm = " + startDtTm + " - stopDtTm = " + stopDtTm);
         DateFormat dateFormatter = new SimpleDateFormat(formatDtTm);
         Date dtStart = null;
         try {
@@ -238,11 +240,9 @@ public class SingleCar extends Activity {
         // Now create the timer for StartCahrging and StopCharging
         Timer startTimer = new Timer();
         Timer stopTimer = new Timer();
-
         // Create the EVChargingTask
         EVChargingTask evChargingTaskStart = new EVChargingTask(this, startTimer, stopTimer, true);
         EVChargingTask evChargingTaskStop = new EVChargingTask(this, startTimer, stopTimer, false);
-
         // Schedule the task
         startTimer.schedule(evChargingTaskStart, dtStart);
         startTimer.schedule(evChargingTaskStop, dtStop);
@@ -250,6 +250,38 @@ public class SingleCar extends Activity {
 
     public void smartCharging() {
         Log.d(TAG, "smart");
+        //get departure time
+        //static final minSoc
+        //get current SOC
+        //get esti
+        //get the price
+        //find min
+        //
+        immediateTv.setVisibility(View.GONE);
+        scheduledStartEt.setVisibility(View.GONE);
+        scheduledEndEt.setVisibility(View.GONE);
+        scheduledBtn.setVisibility(View.GONE);
+        smartBtn.setVisibility(View.VISIBLE);
+        smartDepartureEt.setVisibility(View.VISIBLE);
+    }
+
+    public void startSmartCharging(){
+        Log.d(TAG, "smartCharging Started");
+        String departureTime = smartDepartureEt.getText().toString();
+        int currentSOC = (int) (findSoc()*100.0);
+
+        Log.d(TAG, "currentSOC = "+currentSOC);
+        Date dt = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String strDate = sdf.format(dt);
+        float estimatedTime = findEstimatedChargingTime();
+        String departureDateTime = strDate + " " + departureTime;
+        Log.d(TAG, "departureDateTime =" + departureDateTime);
+        String dateTimeFormat = "yyyy-MM-dd HH:mm";
+        EVSmartCharging evs = new EVSmartCharging();
+
+        evs.startSmartChargingActivity(this,estimatedTime,currentSOC, SOCMin, departureDateTime, dateTimeFormat) ;
+
     }
 
 

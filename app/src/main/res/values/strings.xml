@@ -17,4 +17,5 @@
     <string name="car1">"Car1: "</string>
     <string name="car2">"Car2: "</string>
     <string name="car3">"Car3: "</string>
+    <string name="departure_time">"Departure Time"</string>
 </resources>

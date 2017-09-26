@@ -1,10 +1,5 @@
-/*
 package com.android.susmita.ecalcharge_mercedez_android;
 
-*/
-/**
- * Created by susmita on 9/1/2017.
- *//*
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,6 +18,14 @@ public class GetApxData {
     public static final String LABEL_NET_PRICE = "Price";
     public static final Integer LABEL_COUNT = 24;
 
+
+    public Double[] getAPXprice(String spreadsheetKey, String date) {
+
+        Map<String, Double[]> mapAPXdata = this.getAPXdata(spreadsheetKey, date);
+        Double[] price = mapAPXdata.get(LABEL_NET_PRICE);
+
+        return price;
+    }
 
     public Map<String, Double[]> getAPXdata(String spreadsheetKey, String date) {
 
@@ -136,7 +139,7 @@ public class GetApxData {
 
         //https://docs.google.com/spreadsheets/d/1dSyhVOt8sEpmopzNe-Vo5Fm-qIJX1Fa5E-HAZOFodj0/edit?usp=sharing
 
-        GoogleSpreadsheetParser parser = new GoogleSpreadsheetParser();
+        GetApxData parser = new GetApxData();
 
         String spreadsheetKey = "1dSyhVOt8sEpmopzNe-Vo5Fm-qIJX1Fa5E-HAZOFodj0";
         String date = "08/19/2017";
@@ -147,4 +150,3 @@ public class GetApxData {
     }
 
 }
-*/
