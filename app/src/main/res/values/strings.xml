@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">Ecalcharge_mercedez_android</string>
-    <string name="find_soc">Check Battery Label</string>
+    <string name="find_soc">Check Battery SOC</string>
     <string name="charge_immediately">Charge Immediately</string>
     <string name="smart_charging">Smart Charging</string>
     <string name="scheduled_charging">Scheduled Charging</string>
     <string name="time_estimated"></string>
     <string name="turn_on">Turn On</string>
-    <string name="your_soc">Your SOC</string>
+    <string name="your_soc">SOC: </string>
     <string name="your_charging_started_immediately">Your charging started immediately</string>
     <string name="start_time">Enter start time</string>
     <string name="end_time">Enter end time</string>
@@ -18,4 +18,5 @@
     <string name="car2">"Car2: "</string>
     <string name="car3">"Car3: "</string>
     <string name="departure_time">"Departure Time"</string>
+    <string name="fleetStatus">"Get Your Fleet Status</string>
 </resources>

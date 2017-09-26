@@ -25,13 +25,13 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //Intent - takes us to the requested activity. Here register is the requested activity
-                Intent singleCarIntent = new Intent(MainActivity.this, SingleCar.class);
+                Intent singleCarIntent = new Intent(MainActivity.this, SingleCarActivity.class);
                 startActivity(singleCarIntent);
             }
         });
         fleetButton.setOnClickListener(v -> {
             //Intent - takes us to the requested activity. Here register is the requested activity
-            Intent fleetIntent = new Intent(MainActivity.this, Fleet.class);
+            Intent fleetIntent = new Intent(MainActivity.this, FleetActivity.class);
             startActivity(fleetIntent);
         });
     }

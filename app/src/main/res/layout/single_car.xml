@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/soc_button"
-        android:hint="@string/your_soc"/>
+        android:text="@string/your_soc"/>
 
     <Button
         android:id="@+id/charge_button"

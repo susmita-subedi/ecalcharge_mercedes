@@ -33,8 +33,9 @@ import butterknife.ButterKnife;
  * Created by susmita on 9/20/2017.
  */
 
-public class SingleCar extends Activity {
+public class SingleCarActivity extends Activity {
 
+    static final int SOCMin = 35;
     static String TAG = "SingleCarActivity";
     byte[] vehicleSerial;
     @BindView(R.id.soc_button)
@@ -59,8 +60,7 @@ public class SingleCar extends Activity {
     @BindView(R.id.smart_et)
     EditText smartDepartureEt;
     private float time;
-    static final int SOCMin = 35;
-
+    float soc;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,12 +74,12 @@ public class SingleCar extends Activity {
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         radioGroup.clearCheck();
         radioGroup.setOnCheckedChangeListener(this::selectChargingOptions);
-
         smartBtn.setOnClickListener(view -> startSmartCharging());
     }
 
     private void downloadCertificate() {
         Manager.getInstance().downloadCertificate("AI7C2xGAR78Xq4jQo6e4c6_wIWpBg4IZslgREwtztCrBozXnoixi6tHXbtN5tR3Sc3I_Ge8lXSHM3AQVSrwr3FKTkkm_PWIxfKSp1j2Ss0liOHq2aTFCyOCAWZ6w2yTfhg", new Manager.DownloadCallback() {
+
             @Override
             public void onDownloaded(byte[] bytes) {
                 Log.d(TAG, "Access granted: ");
@@ -103,6 +103,7 @@ public class SingleCar extends Activity {
     }
 
     public float findSoc() {
+
         final Telematics telematics = Manager.getInstance().getTelematics();
         byte[] command = Command.Charging.getChargeState();
         telematics.sendCommand(command, vehicleSerial, new Telematics.CommandCallback() {
@@ -113,7 +114,8 @@ public class SingleCar extends Activity {
                     if (incomingCommand.is(Command.Charging.CHARGE_STATE)) {
                         ChargeState state = (ChargeState) incomingCommand;
                         Log.d(TAG, "Battery: " + state.getBatteryLevel());
-                        socTextView.setText(String.valueOf(state.getBatteryLevel() * 100));
+                        soc = state.getBatteryLevel()*100;
+                        socTextView.setText(String.valueOf(state.getBatteryLevel() * 100)+"%");
                     }
                 } catch (CommandParseException e) {
                     Log.e(TAG, e.getLocalizedMessage());
@@ -124,7 +126,7 @@ public class SingleCar extends Activity {
             public void onCommandFailed(TelematicsError telematicsError) {
             }
         });
-        return time;
+        return soc;
     }
 
     public void startCharging() {
@@ -265,12 +267,11 @@ public class SingleCar extends Activity {
         smartDepartureEt.setVisibility(View.VISIBLE);
     }
 
-    public void startSmartCharging(){
+    public void startSmartCharging() {
         Log.d(TAG, "smartCharging Started");
         String departureTime = smartDepartureEt.getText().toString();
-        int currentSOC = (int) (findSoc()*100.0);
-
-        Log.d(TAG, "currentSOC = "+currentSOC);
+        int currentSOC = (int) (findSoc() * 100.0);
+        Log.d(TAG, "currentSOC = " + currentSOC);
         Date dt = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String strDate = sdf.format(dt);
@@ -279,8 +280,7 @@ public class SingleCar extends Activity {
         Log.d(TAG, "departureDateTime =" + departureDateTime);
         String dateTimeFormat = "yyyy-MM-dd HH:mm";
         EVSmartCharging evs = new EVSmartCharging();
-
-        evs.startSmartChargingActivity(this,estimatedTime,currentSOC, SOCMin, departureDateTime, dateTimeFormat) ;
+        evs.startSmartChargingActivity(this, estimatedTime, currentSOC, SOCMin, departureDateTime, dateTimeFormat);
 
     }
 

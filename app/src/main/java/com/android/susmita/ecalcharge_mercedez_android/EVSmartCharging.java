@@ -10,12 +10,11 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.DoubleSummaryStatistics;
 import java.util.Timer;
 
 public class EVSmartCharging {
 
-    public void startSmartChargingActivity(SingleCar singleCar, float fltEstTimeToChargeFromSOCminToFull,int SOCcurr, int SOCmin, String departureDateTime, String dateTimeFormat) {
+    public void startSmartChargingActivity(SingleCarActivity singleCarActivity, float fltEstTimeToChargeFromSOCminToFull, int SOCcurr, int SOCmin, String departureDateTime, String dateTimeFormat) {
 
 //        double[] apxPrice = {1.0,2.0,3.0,4.0,5.0,6.9,7.0,8.0,
 //                1.0,2.0,3.0,4.0,5.0,6.9,7.0,8.0,
@@ -37,7 +36,7 @@ public class EVSmartCharging {
         if(SOCcurr < SOCmin) {
             System.out.println("Going inside if");
             //get the estimated time to charge from SOCcurr to SOCmin
-            float fltEstTimeToCharge = singleCar.findEstimatedChargingTime();
+            float fltEstTimeToCharge = singleCarActivity.findEstimatedChargingTime();
             float chargeTillSOCmin = SOCmin - SOCcurr;
             float chargeFromSOCcurrToFull = 100 - SOCcurr;
             float fltEstTimeToChargeTillSOCmin = fltEstTimeToCharge *  (chargeTillSOCmin / chargeFromSOCcurrToFull);
@@ -74,8 +73,8 @@ public class EVSmartCharging {
             Timer stopTimer = new Timer();
 
             // Create the EVChargingTask
-            EVChargingTask evChargingTaskStart = new EVChargingTask(singleCar, startTimer, stopTimer, true);
-            EVChargingTask evChargingTaskStop = new EVChargingTask(singleCar, startTimer, stopTimer, false);
+            EVChargingTask evChargingTaskStart = new EVChargingTask(singleCarActivity, startTimer, stopTimer, true);
+            EVChargingTask evChargingTaskStop = new EVChargingTask(singleCarActivity, startTimer, stopTimer, false);
 
             // Schedule the task
             startTimer.schedule(evChargingTaskStart, dtStart);
@@ -156,8 +155,8 @@ public class EVSmartCharging {
             Timer stopTimer = new Timer();
 
             // Create the EVChargingTask
-            EVChargingTask evChargingTaskStart = new EVChargingTask(singleCar, startTimer, stopTimer, true);
-            EVChargingTask evChargingTaskStop = new EVChargingTask(singleCar, startTimer, stopTimer, false);
+            EVChargingTask evChargingTaskStart = new EVChargingTask(singleCarActivity, startTimer, stopTimer, true);
+            EVChargingTask evChargingTaskStop = new EVChargingTask(singleCarActivity, startTimer, stopTimer, false);
 
             // Schedule the task
             startTimer.schedule(evChargingTaskStart, dtStart);

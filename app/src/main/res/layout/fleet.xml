@@ -6,13 +6,20 @@
     android:orientation="vertical"
     android:layout_marginLeft="10dp"
     android:layout_marginTop="10dp">
-
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/fleetStatus"
+    android:visibility="gone"
+    android:id="@+id/fleetStatusButton"/>
     <TextView
         android:id="@+id/fleetStatus"
+        android:layout_below="@+id/fleetStatusButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/your_fleet_status"/>
-    <TextView
+        android:text="@string/your_fleet_status"
+        />
+    <Button
         android:id="@+id/car1"
         android:layout_marginTop="15dp"
         android:layout_below="@+id/fleetStatus"
@@ -20,14 +27,14 @@
         android:layout_height="wrap_content"
         android:text="@string/car1"/>
 
-    <TextView
+    <Button
         android:id="@+id/car2"
         android:layout_marginTop="15dp"
         android:layout_below="@+id/car1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/car2"/>
-    <TextView
+    <Button
         android:id="@+id/car3"
         android:layout_marginTop="15dp"
         android:layout_below="@+id/car2"
@@ -39,15 +46,18 @@
         android:id="@+id/car1soc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/car2"
-        android:layout_alignTop="@+id/car1"/>
+        android:layout_alignTop="@id/car1"
+        android:layout_below="@+id/fleetStatusButton"
+        android:layout_toEndOf="@id/car1"
+        />
 
     <TextView
         android:id="@+id/car2soc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/car2"
-        android:layout_toEndOf="@+id/car2"
+        android:layout_below="@+id/car1soc"
+        android:layout_alignTop="@id/car2"
+        android:layout_toEndOf="@id/car2"
         />
 
     <TextView
@@ -55,6 +65,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/car3"
+        android:layout_below="@id/car2soc"
         android:layout_toEndOf="@+id/car3"
         />
+
 </RelativeLayout>

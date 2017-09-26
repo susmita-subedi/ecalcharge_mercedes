@@ -13,15 +13,15 @@ public class EVChargingTask  extends TimerTask{
     private Timer startTimer;
     private Timer stopTimer;
     private boolean isCharge;
-    private SingleCar singleCar;
+    private SingleCarActivity singleCarActivity;
 
-    public EVChargingTask(SingleCar singleCar, Timer startTimer, Timer stopTimer, boolean isCharge) {
+    public EVChargingTask(SingleCarActivity singleCarActivity, Timer startTimer, Timer stopTimer, boolean isCharge) {
 
         Date dt = new Date();
         System.out.print("Time [" + dt.toString() + "] - ");
         System.out.println("EVCharging Initialized ... ");
 
-        this.singleCar = singleCar;
+        this.singleCarActivity = singleCarActivity;
         this.startTimer = startTimer;
         this.stopTimer = stopTimer;
         this.isCharge = isCharge;
@@ -54,8 +54,8 @@ public class EVChargingTask  extends TimerTask{
         System.out.println("Charging Started ... ");
 
         // Call the function for start charging here
-        //SingleCar objSingleCar = new SingleCar();
-        singleCar.startCharging();
+        //SingleCarActivity objSingleCar = new SingleCarActivity();
+        singleCarActivity.startCharging();
 
 
     }
@@ -67,7 +67,7 @@ public class EVChargingTask  extends TimerTask{
         System.out.println("Charging Stopped ... ");
 
         // Call the function for stop charging here
-        singleCar.startCharging();
+        singleCarActivity.startCharging();
         startTimer.cancel();
         stopTimer.cancel();
 
