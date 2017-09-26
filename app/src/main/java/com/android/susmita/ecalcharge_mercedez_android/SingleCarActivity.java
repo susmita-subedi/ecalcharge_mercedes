@@ -39,7 +39,7 @@ import butterknife.ButterKnife;
 
 public class SingleCarActivity extends Activity {
 
-    static final int SOCMin = 35;
+    static final int SOCMin = 20;
     static String TAG = "SingleCarActivity";
     byte[] vehicleSerial;
     @BindView(R.id.soc_button)
@@ -52,19 +52,21 @@ public class SingleCarActivity extends Activity {
     @BindView(R.id.time_textView)
     TextView timeTextView;
 
-//    @BindView(R.id.scheduled_startEt)
-//    EditText scheduledStartEt;
-//    @BindView(R.id.scheduled_endEt)
-//    EditText scheduledEndEt;
+    @BindView(R.id.scheduled_startTv)
+    TextView scheduledStartTv;
+    @BindView(R.id.scheduled_endTv)
+    TextView scheduledEndTv;
     @BindView(R.id.scheduled_btn)
     Button scheduledBtn;
     @BindView(R.id.smart_btn)
     Button smartBtn;
-    @BindView(R.id.smart_et)
-    EditText smartDepartureEt;
+    @BindView(R.id.smart_tv)
+    TextView smartDepartureTv;
     private float time;
     float soc;
-
+    TimePicker timePicker1;
+    TimePicker timePicker2;
+    TimePicker timePicker3;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +74,12 @@ public class SingleCarActivity extends Activity {
         ButterKnife.bind(this);
         getInstance();
         downloadCertificate();
-        TimePicker timePicker1 = (TimePicker) findViewById(R.id.timePicker1);
+        timePicker1 = findViewById(R.id.timePicker1);
         timePicker1.setIs24HourView(true);
+        timePicker2 = findViewById(R.id.timePicker2);
+        timePicker2.setIs24HourView(true);
+        timePicker3 = findViewById(R.id.timePicker2);
+        timePicker3.setIs24HourView(true);
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         radioGroup.clearCheck();
         switchButton.setOnCheckedChangeListener((cb, isChecked) -> {
@@ -91,6 +97,7 @@ public class SingleCarActivity extends Activity {
                 stopCharging();
             }
         });
+        scheduledBtn.setOnClickListener(view->startScheduledCharging());
         socButton.setOnClickListener(view -> findSoc());
         radioGroup.setOnCheckedChangeListener(this::selectChargingOptions);
         smartBtn.setOnClickListener(view -> startSmartCharging());
@@ -124,8 +131,6 @@ public class SingleCarActivity extends Activity {
 
 
     public float findSoc() {
-        GetApxData apx = new GetApxData();
-        apx.printAPXdata(apx.getAPXdata("1dSyhVOt8sEpmopzNe-Vo5Fm-qIJX1Fa5E-HAZOFodj0","08/19/2017"));
         final Telematics telematics = Manager.getInstance().getTelematics();
         byte[] command = Command.Charging.getChargeState();
         telematics.sendCommand(command, vehicleSerial, new Telematics.CommandCallback() {
@@ -196,18 +201,16 @@ public class SingleCarActivity extends Activity {
                 try {
                     IncomingCommand incomingCommand = IncomingCommand.create(bytes);
                     ChargeState chargeState = (ChargeState) incomingCommand;
-//                    socTextView.setText(String.valueOf(chargeState.getChargingState()));
+
                     if ((String.valueOf(chargeState.getChargingState())).equals("DISCONNECTED")) {
                         charging = false;
                         switchButton.setChecked(false);
 //                        radioGroup.clearCheck();
-//                        chargeButton.setText(R.string.turn_on);
                         timeTextView.setVisibility(View.GONE);
 
                     } else {
                         charging = true;
                         switchButton.setChecked(true);
-//                        chargeButton.setText(R.string.turn_off);
                         findEstimatedChargingTime();
                     }
 
@@ -259,15 +262,17 @@ public class SingleCarActivity extends Activity {
     public void immediateCharging() {
         startCharging();
         timeTextView.setVisibility(View.VISIBLE);
-//        timePicker1.setVisibility(View.GONE);
-//        scheduledEndEt.setVisibility(View.GONE);
+        timePicker1.setVisibility(View.GONE);
+        timePicker2.setVisibility(View.GONE);
+        scheduledStartTv.setVisibility(View.GONE);
+        scheduledEndTv.setVisibility(View.GONE);
         scheduledBtn.setVisibility(View.GONE);
     }
 
     public void scheduledCharging() {
         timeTextView.setVisibility(View.GONE);
-//        scheduledStartEt.setVisibility(View.VISIBLE);
-//        scheduledEndEt.setVisibility(View.VISIBLE);
+        timePicker3.setVisibility(View.GONE);
+        smartBtn.setVisibility(View.GONE);
         scheduledBtn.setVisibility(View.VISIBLE);
         Log.d(TAG, "scheduled");
         scheduledBtn.setOnClickListener(view -> startScheduledCharging());
@@ -283,10 +288,14 @@ public class SingleCarActivity extends Activity {
         Date currDate = new Date();
         String[] st_time = startTime.split(":");
         String[] end_time = endTime.split(":");
-        String st_HH = st_time[0];
-        String st_mm = st_time[1];
-        String end_HH = end_time[0];
-        String end_mm = end_time[1];
+//        String st_HH = st_time[0];
+//        String st_mm = st_time[1];
+//        String end_HH = end_time[0];
+//        String end_mm = end_time[1];
+        String st_HH = String.valueOf(timePicker1.getHour());
+        String st_mm = String.valueOf(timePicker1.getMinute());
+        String end_HH = String.valueOf(timePicker2.getHour());
+        String end_mm = String.valueOf(timePicker2.getMinute());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String stCurrDate = sdf.format(currDate);
         String formatDtTm = "yyyy-MM-dd HH:mm";
@@ -320,13 +329,6 @@ public class SingleCarActivity extends Activity {
 
     public void smartCharging() {
         Log.d(TAG, "smart");
-        //get departure time
-        //static final minSoc
-        //get current SOC
-        //get esti
-        //get the price
-        //find min
-        //
         timeTextView.setVisibility(View.GONE);
 //        scheduledStartEt.setVisibility(View.GONE);
 //        scheduledEndEt.setVisibility(View.GONE);

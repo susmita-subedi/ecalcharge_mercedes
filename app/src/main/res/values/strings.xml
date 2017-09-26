@@ -19,4 +19,12 @@
     <string name="car3">"Car3: "</string>
     <string name="departure_time">"Departure Time"</string>
     <string name="fleetStatus">"Get Your Fleet Status</string>
+    <string name="charging_options">Charging Options:</string>
+    <string name="charging_status">Charging Status:</string>
+    <string name="charging">Charging</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="end_time1">End Time:</string>
+    <string name="start_time1">Start Time:</string>
+    <string name="submit">Submit</string>
+    <string name="submit2">Submit</string>
 </resources>
