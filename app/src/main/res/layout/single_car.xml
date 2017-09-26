@@ -126,7 +126,13 @@
             <!--android:inputType="time"-->
             <!--android:visibility="gone"/>-->
 
-
+        <TimePicker
+            android:id="@+id/timePicker1"
+            android:layout_width="263dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/chargingOptions"
+            android:layout_alignStart="@+id/switch2"
+            android:layout_marginStart="16dp"/>
         <Button
             android:id="@+id/scheduled_btn"
             android:layout_width="wrap_content"

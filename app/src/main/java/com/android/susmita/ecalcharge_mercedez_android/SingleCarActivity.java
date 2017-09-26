@@ -12,6 +12,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.highmobility.hmkit.Command.Command;
 import com.highmobility.hmkit.Command.CommandParseException;
@@ -51,10 +52,10 @@ public class SingleCarActivity extends Activity {
     @BindView(R.id.time_textView)
     TextView timeTextView;
 
-    @BindView(R.id.scheduled_startEt)
-    EditText scheduledStartEt;
-    @BindView(R.id.scheduled_endEt)
-    EditText scheduledEndEt;
+//    @BindView(R.id.scheduled_startEt)
+//    EditText scheduledStartEt;
+//    @BindView(R.id.scheduled_endEt)
+//    EditText scheduledEndEt;
     @BindView(R.id.scheduled_btn)
     Button scheduledBtn;
     @BindView(R.id.smart_btn)
@@ -63,7 +64,7 @@ public class SingleCarActivity extends Activity {
     EditText smartDepartureEt;
     private float time;
     float soc;
-
+//    TimePicker timePicker1 = (TimePicker) findViewById(R.id.timePicker1);
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +72,7 @@ public class SingleCarActivity extends Activity {
         ButterKnife.bind(this);
         getInstance();
         downloadCertificate();
+//        timePicker1.setIs24HourView(true);
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         radioGroup.clearCheck();
         switchButton.setOnCheckedChangeListener((cb, isChecked) -> {
@@ -255,15 +257,15 @@ public class SingleCarActivity extends Activity {
     public void immediateCharging() {
         startCharging();
         timeTextView.setVisibility(View.VISIBLE);
-        scheduledStartEt.setVisibility(View.GONE);
-        scheduledEndEt.setVisibility(View.GONE);
+//        timePicker1.setVisibility(View.GONE);
+//        scheduledEndEt.setVisibility(View.GONE);
         scheduledBtn.setVisibility(View.GONE);
     }
 
     public void scheduledCharging() {
         timeTextView.setVisibility(View.GONE);
-        scheduledStartEt.setVisibility(View.VISIBLE);
-        scheduledEndEt.setVisibility(View.VISIBLE);
+//        scheduledStartEt.setVisibility(View.VISIBLE);
+//        scheduledEndEt.setVisibility(View.VISIBLE);
         scheduledBtn.setVisibility(View.VISIBLE);
         Log.d(TAG, "scheduled");
         scheduledBtn.setOnClickListener(view -> startScheduledCharging());
@@ -271,8 +273,10 @@ public class SingleCarActivity extends Activity {
 
     public void startScheduledCharging() {
         Log.d(TAG, "startTime");
-        String startTime = scheduledStartEt.getText().toString();
-        String endTime = scheduledEndEt.getText().toString();
+//        String startTime = scheduledStartEt.getText().toString();
+//        String endTime = scheduledEndEt.getText().toString();
+        String startTime = "1:00";
+      String endTime = "12:00";
         Log.d(TAG, startTime + " " + endTime);
         Date currDate = new Date();
         String[] st_time = startTime.split(":");
@@ -322,8 +326,8 @@ public class SingleCarActivity extends Activity {
         //find min
         //
         timeTextView.setVisibility(View.GONE);
-        scheduledStartEt.setVisibility(View.GONE);
-        scheduledEndEt.setVisibility(View.GONE);
+//        scheduledStartEt.setVisibility(View.GONE);
+//        scheduledEndEt.setVisibility(View.GONE);
         scheduledBtn.setVisibility(View.GONE);
         smartBtn.setVisibility(View.VISIBLE);
         smartDepartureEt.setVisibility(View.VISIBLE);
