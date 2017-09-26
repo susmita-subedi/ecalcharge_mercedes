@@ -2,6 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
+                android:background="@drawable/myswitch"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_height="match_parent">
 
     <Button
@@ -12,36 +16,72 @@
         android:text="@string/find_soc"/>
 
     <TextView
+        android:id="@+id/soc_textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@+id/soc_button"
+        android:text="@string/your_soc"/>
+    <TextView
         android:id="@+id/soc_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:textStyle="bold"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@id/soc_textView1"
         android:layout_below="@+id/soc_button"
-        android:text="@string/your_soc"/>
+        android:text=""/>
 
-    <Button
-        android:id="@+id/charge_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/soc_textView"
-        android:layout_marginTop="20dp"
-        android:text="@string/turn_on"/>
+    <!--<Button-->
+        <!--android:id="@+id/charge_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="29dp"-->
+        <!--android:text="@string/turn_on"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_below="@+id/soc_textView"-->
+        <!--android:layout_alignParentStart="true"/>-->
 
-    <TextView
+    <!--<TextView
         android:id="@+id/time_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/charge_button"
         android:layout_marginEnd="13dp"
         android:text="@string/time_estimated"
-        android:visibility="gone"/>
+        android:visibility="gone"/>-->
 
+    <Switch
+        android:id="@+id/switch2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textOn="Charging"
+        android:textOff="Disconnected"
+        android:switchMinWidth="40dp"
+        android:thumbTextPadding="4dp"
+        android:layout_marginLeft="10dp"
+        android:textColorHighlight="@color/blue"
+        android:text="Charging Status:"
+        android:layout_below="@+id/soc_textView"
+        android:layout_alignParentStart="true"/>
+    <TextView
+        android:id="@+id/chargingOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/switch2"
+        android:layout_marginTop="25dp"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:text="Charging Options: "
+        />
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/time_textView">
+        android:layout_below="@+id/switch2"
+        android:layout_marginTop="35dp">
 
         <RadioButton
             android:id="@+id/immediate_rb"
@@ -51,12 +91,12 @@
             android:text="@string/charge_immediately"/>
 
         <TextView
-            android:id="@+id/immediate_tv"
+            android:id="@+id/time_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignEnd="@+id/soc_textView"
-            android:layout_below="@+id/radioGroup"
-            android:text="@string/your_charging_started_immediately"
+            android:layout_below="@+id/immediate_rb"
+            android:text="@string/time_estimated"
             android:visibility="gone"/>
 
         <RadioButton
@@ -66,25 +106,26 @@
             android:layout_marginTop="30dp"
             android:text="@string/scheduled_charging"/>
 
-        <EditText
-            android:id="@+id/scheduled_startEt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/scheduled_rb"
-            android:hint="@string/start_time"
-            android:inputType="time"
-            android:visibility="gone"/>
+        <!--<EditText-->
+            <!--android:id="@+id/scheduled_startEt"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_below="@+id/scheduled_rb"-->
+            <!--android:hint="@string/start_time"-->
+            <!--android:inputType="time"-->
+            <!--android:visibility="gone"/>-->
 
-        <EditText
-            android:id="@+id/scheduled_endEt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/scheduled_startEt"
-            android:hint="@string/end_time"
-            android:inputType="time"
-            android:visibility="gone"/>
+        <!--<EditText-->
+            <!--android:id="@+id/scheduled_endEt"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_below="@+id/scheduled_startEt"-->
+            <!--android:hint="@string/end_time"-->
+            <!--android:inputType="time"-->
+            <!--android:visibility="gone"/>-->
+
 
         <Button
             android:id="@+id/scheduled_btn"
@@ -125,6 +166,9 @@
 
 
     </RadioGroup>
+
+
+
 
     <!--android:visibility="gone"-->
 
