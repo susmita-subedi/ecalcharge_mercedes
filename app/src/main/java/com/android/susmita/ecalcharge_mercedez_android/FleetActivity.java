@@ -35,6 +35,24 @@ public class FleetActivity extends Activity {
     TextView car2socTv;
     @BindView(R.id.car3soc)
     TextView car3socTv;
+    @BindView(R.id.car1status)
+    TextView car1statusTv;
+    @BindView(R.id.car2status)
+    TextView car2statusTv;
+    @BindView(R.id.car3status)
+    TextView car3statusTv;
+    @BindView(R.id.car1ChargingTime)
+    TextView car1chargingTime;
+    @BindView(R.id.car2ChargingTime)
+    TextView car2chargingTime;
+    @BindView(R.id.car3ChargingTime)
+    TextView car3chargingTime;
+    @BindView(R.id.car1Range)
+    TextView car1range;
+    @BindView(R.id.car2Range)
+    TextView car2range;
+    @BindView(R.id.car3Range)
+    TextView car3range;
     @BindView(R.id.fleetStatusButton)
     Button fleetStatusBtn;
     @BindView(R.id.car1)
@@ -58,12 +76,17 @@ public class FleetActivity extends Activity {
             Log.d(TAG, "multiple2");
             Log.d(TAG, "multiple");
             findSoc1("car1");
-
+            getStatus("car1");
         });
-        car2Btn.setOnClickListener(e-> findSoc1("car2"));
-        car3Btn.setOnClickListener(e->findSoc1("car3"));
+        car2Btn.setOnClickListener(e -> {
+            findSoc1("car2");
+            getStatus("car2");
+        });
+        car3Btn.setOnClickListener(e -> {
+            findSoc1("car3");
+            getStatus("car3");
+        });
     }
-
 
 
     public void getInstance() {
@@ -83,7 +106,6 @@ public class FleetActivity extends Activity {
             public void onDownloaded(byte[] serial) {
                 Log.d(TAG, "Access granted: ");
                 vehicleSerial1 = serial;
-
             }
 
             @Override
@@ -126,13 +148,11 @@ public class FleetActivity extends Activity {
     public void findSoc1(String car) {
         Telematics telematics = Manager.getInstance().getTelematics();
         byte[] command = Command.Charging.getChargeState();
-        if(car == "car1"){
+        if (car == "car1") {
             vehicleSerial = vehicleSerial1;
-        }
-        else if (car == "car2"){
+        } else if (car == "car2") {
             vehicleSerial = vehicleSerial2;
-        }
-        else {
+        } else {
             vehicleSerial = vehicleSerial3;
         }
         telematics.sendCommand(command, vehicleSerial, new Telematics.CommandCallback() {
@@ -146,12 +166,21 @@ public class FleetActivity extends Activity {
                         if (car == "car1") {
                             Log.d(TAG, "Battery Level of Car 1: " + state.getBatteryLevel());
                             car1socTv.setText(String.valueOf(soc));
+                            car1statusTv.setText(String.valueOf(state.getChargingState()));
+                            car1chargingTime.setText(String.valueOf(state.getTimeToCompleteCharge()));
+                            car1range.setText(String.valueOf(state.getEstimatedRange()));
                         } else if (car == "car2") {
                             Log.d(TAG, "Battery Level of Car 2: " + state.getBatteryLevel());
                             car2socTv.setText(String.valueOf(soc));
+                            car2statusTv.setText(String.valueOf(state.getChargingState()));
+                            car2chargingTime.setText(String.valueOf(state.getTimeToCompleteCharge()));
+                            car2range.setText(String.valueOf(state.getEstimatedRange()));
                         } else if (car == "car3") {
                             Log.d(TAG, "Battery Level of Car 3: " + state.getBatteryLevel());
                             car3socTv.setText(String.valueOf(soc));
+                            car3statusTv.setText(String.valueOf(state.getChargingState()));
+                            car3chargingTime.setText(String.valueOf(state.getTimeToCompleteCharge()));
+                            car3range.setText(String.valueOf(state.getEstimatedRange()));
 
                         }
                     }
@@ -162,7 +191,49 @@ public class FleetActivity extends Activity {
 
             @Override
             public void onCommandFailed(TelematicsError e) {
-                Log.e(TAG, "onCommandFailed()"+e.getMessage());
+                Log.e(TAG, "onCommandFailed()" + e.getMessage());
+            }
+        });
+    }
+
+    public void getStatus(String car) {
+        Telematics telematics = Manager.getInstance().getTelematics();
+        byte[] command = Command.Charging.getChargeState();
+        if (car == "car1") {
+            vehicleSerial = vehicleSerial1;
+        } else if (car == "car2") {
+            vehicleSerial = vehicleSerial2;
+        } else {
+            vehicleSerial = vehicleSerial3;
+        }
+        telematics.sendCommand(command, vehicleSerial, new Telematics.CommandCallback() {
+            @Override
+            public void onCommandResponse(byte[] bytes) {
+                try {
+                    IncomingCommand incomingCommand = IncomingCommand.create(bytes);
+                    if (incomingCommand.is(Command.Charging.CHARGE_STATE)) {
+                        ChargeState state = (ChargeState) incomingCommand;
+                        soc = state.getBatteryLevel() * 100;
+                        if (car == "car1") {
+                            Log.d(TAG, "Status of Car 1: " + state.getChargingState());
+                            car1statusTv.setText(String.valueOf(soc));
+                        } else if (car == "car2") {
+                            Log.d(TAG, "Status of Car 2: " + state.getChargingState());
+                            car2statusTv.setText(String.valueOf(soc));
+                        } else if (car == "car3") {
+                            Log.d(TAG, "Status of Car 3: " + state.getChargingState());
+                            car3statusTv.setText(String.valueOf(soc));
+
+                        }
+                    }
+                } catch (CommandParseException e) {
+                    Log.e(TAG, e.getLocalizedMessage());
+                }
+            }
+
+            @Override
+            public void onCommandFailed(TelematicsError e) {
+                Log.e(TAG, "onCommandFailed()" + e.getMessage());
             }
         });
     }

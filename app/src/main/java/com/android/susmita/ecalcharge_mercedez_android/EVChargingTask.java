@@ -42,7 +42,7 @@ public class EVChargingTask  extends TimerTask{
             Date dt = new Date();
             System.out.print("Time [" + dt.toString() + "] - ");
             System.out.println("Calling stopCharging() ... ");
-            this.stopCharging();
+            this.stopCharging1();
         }
 
     }
@@ -60,14 +60,14 @@ public class EVChargingTask  extends TimerTask{
 
     }
 
-    private void stopCharging() {
+    private void stopCharging1() {
 
         Date dt = new Date();
         System.out.print("Time [" + dt.toString() + "] - ");
         System.out.println("Charging Stopped ... ");
 
         // Call the function for stop charging here
-        singleCarActivity.startCharging();
+        singleCarActivity.stopCharging();
         startTimer.cancel();
         stopTimer.cancel();
 

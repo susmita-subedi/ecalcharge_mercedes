@@ -6,6 +6,21 @@
     android:orientation="vertical"
     android:layout_marginLeft="10dp"
     android:layout_marginTop="10dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fleetStatus"
+        android:layout_toEndOf="@+id/car1"
+        android:id="@+id/soc"
+        android:text="SOC"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/fleetStatus"
+        android:layout_toEndOf="@+id/soc"
+        android:id="@+id/status"
+        android:text="STATUS"/>
 <Button
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -17,6 +32,7 @@
         android:layout_below="@+id/fleetStatusButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:text="@string/your_fleet_status"
         />
     <Button
@@ -25,6 +41,7 @@
         android:layout_below="@+id/fleetStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/blue"
         android:text="@string/car1"/>
 
     <Button
@@ -33,6 +50,7 @@
         android:layout_below="@+id/car1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/blue"
         android:text="@string/car2"/>
     <Button
         android:id="@+id/car3"
@@ -40,15 +58,26 @@
         android:layout_below="@+id/car2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/blue"
         android:text="@string/car3"/>
 
     <TextView
         android:id="@+id/car1soc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/car1"
+        android:layout_alignBaseline="@id/car1"
         android:layout_below="@+id/fleetStatusButton"
         android:layout_toEndOf="@id/car1"
+
+        />
+    <TextView
+        android:id="@+id/car1status"
+        android:layout_alignLeft="@+id/status"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/car1"
+        android:layout_below="@+id/status"
+        android:layout_toEndOf="@id/car1soc"
         />
 
     <TextView
@@ -56,17 +85,101 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/car1soc"
-        android:layout_alignTop="@id/car2"
+        android:layout_alignBaseline="@id/car2"
         android:layout_toEndOf="@id/car2"
         />
+    <TextView
+        android:id="@+id/car2status"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/car2"
+        android:layout_alignLeft="@id/status"
+        android:layout_below="@+id/car1status"
+        android:layout_toEndOf="@id/car2soc"
 
+        />
     <TextView
         android:id="@+id/car3soc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/car3"
+        android:layout_alignBaseline="@+id/car3"
         android:layout_below="@id/car2soc"
         android:layout_toEndOf="@+id/car3"
         />
+    <TextView
+        android:id="@+id/car3status"
+        android:layout_alignLeft="@id/status"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/car3"
+        android:layout_below="@+id/car2status"
+        android:layout_toEndOf="@id/car3soc"
+        />
+    <TextView
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:text="CHARGING TIME"
+        android:layout_toEndOf="@+id/status"
+        android:layout_below="@+id/fleetStatus"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/chargingTime"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/car1ChargingTime"
+        android:layout_alignBaseline="@+id/car1"
+        android:layout_alignLeft="@+id/chargingTime"
+        android:layout_below="@+id/chargingTime"
+        android:layout_toEndOf="@+id/car1status"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/car2ChargingTime"
+        android:layout_alignBaseline="@+id/car2"
+        android:layout_alignLeft="@+id/chargingTime"
+        android:layout_below="@+id/car1ChargingTime"
+        android:layout_toEndOf="@+id/car2status"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/car3ChargingTime"
+        android:layout_alignBaseline="@+id/car3"
+        android:layout_alignLeft="@+id/chargingTime"
+        android:layout_below="@+id/car2ChargingTime"
+        android:layout_toEndOf="@+id/car3status"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RANGE"
+        android:layout_toEndOf="@+id/chargingTime"
+        android:layout_below="@+id/fleetStatus"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/range"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/car1Range"
+        android:layout_alignBaseline="@+id/car1"
+        android:layout_alignLeft="@+id/range"
+        android:layout_below="@+id/range"
+        android:layout_toEndOf="@+id/car1ChargingTime"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/car2Range"
+        android:layout_alignBaseline="@+id/car2"
+        android:layout_alignLeft="@+id/range"
+        android:layout_below="@+id/car1Range"
+        android:layout_toEndOf="@+id/car2ChargingTime"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/car3Range"
+        android:layout_alignLeft="@+id/range"
+        android:layout_below="@+id/car2Range"
+        android:layout_alignBaseline="@+id/car3"
+        android:layout_toEndOf="@+id/car3ChargingTime"/>
 
 </RelativeLayout>

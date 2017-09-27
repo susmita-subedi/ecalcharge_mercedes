@@ -23,6 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
+                android:backgroundTint="@color/blue"
                 android:text="@string/find_soc"/>
 
             <TextView
@@ -144,9 +145,17 @@
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center"
+                    android:backgroundTint="@color/blue"
                     android:layout_marginBottom="20dp"
                     android:text="@string/submit"
                     android:visibility="gone"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_below="@+id/scheduled_rb"
+                    android:id="@+id/scheduledStatus"
                     />
 
                 <RadioButton
@@ -162,23 +171,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/smart_rb"
-                    android:inputType="time"
                     android:text="@string/departure_time"
+                    android:layout_marginLeft="15dp"
                     android:visibility="gone"
-
                     />
 
                 <TimePicker
                     android:id="@+id/timePicker3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@+id/smart_et"
-                    android:layout_marginStart="16dp"
+                    android:layout_width="162dp"
+                    android:layout_height="147dp"
+                    android:layout_below="@+id/smart_tv"
                     android:scaleX="0.75"
                     android:scaleY="0.75"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/smartStatus"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content"/>
 
             </RadioGroup>
 
@@ -187,13 +199,12 @@
                 android:id="@+id/smart_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/chargingOptions"
-                android:layout_gravity="center"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="325dp"
-                android:layout_toEndOf="@+id/soc_textView"
+                android:backgroundTint="@color/blue"
                 android:text="@string/submit2"
-                android:visibility="gone"/>
+                android:layout_marginTop="278dp"
+                android:visibility="gone"
+                android:layout_below="@+id/chargingOptions"
+                android:layout_toEndOf="@+id/soc_textView1"/>
 
             <TimePicker
                 android:id="@+id/timePicker2"

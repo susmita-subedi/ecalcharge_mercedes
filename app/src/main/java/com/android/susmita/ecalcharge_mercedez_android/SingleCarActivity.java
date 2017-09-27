@@ -6,8 +6,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
@@ -26,7 +24,6 @@ import com.highmobility.hmkit.Telematics;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
 
@@ -41,6 +38,7 @@ public class SingleCarActivity extends Activity {
 
     static final int SOCMin = 20;
     static String TAG = "SingleCarActivity";
+    static int curSoc;
     byte[] vehicleSerial;
     @BindView(R.id.soc_button)
     Button socButton;
@@ -51,7 +49,10 @@ public class SingleCarActivity extends Activity {
     boolean charging;
     @BindView(R.id.time_textView)
     TextView timeTextView;
-
+    @BindView(R.id.scheduledStatus)
+    TextView scheduledStatus;
+    @BindView(R.id.smartStatus)
+    TextView smartStatus;
     @BindView(R.id.scheduled_startTv)
     TextView scheduledStartTv;
     @BindView(R.id.scheduled_endTv)
@@ -62,11 +63,12 @@ public class SingleCarActivity extends Activity {
     Button smartBtn;
     @BindView(R.id.smart_tv)
     TextView smartDepartureTv;
-    private float time;
     float soc;
     TimePicker timePicker1;
     TimePicker timePicker2;
     TimePicker timePicker3;
+    private float time;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,30 +85,31 @@ public class SingleCarActivity extends Activity {
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         radioGroup.clearCheck();
         switchButton.setOnCheckedChangeListener((cb, isChecked) -> {
-            if(isChecked)
-            {
+            if (isChecked) {
                 charging = false;
-                startCharging();
-
-            }
-            else
-            {
-
+//                startCharging();
+            } else {
                 charging = true;
 //                startCharging();
                 stopCharging();
             }
         });
-        scheduledBtn.setOnClickListener(view->startScheduledCharging());
-        socButton.setOnClickListener(view -> findSoc());
+        scheduledBtn.setOnClickListener(view -> {
+                    startScheduledCharging();
+                }
+        );
+        socButton.setOnClickListener(view ->
+                {
+                    findSoc();
+
+                }
+        );
         radioGroup.setOnCheckedChangeListener(this::selectChargingOptions);
         smartBtn.setOnClickListener(view -> startSmartCharging());
     }
 
     private void downloadCertificate() {
-       // Manager.getInstance().downloadCertificate("AI7C2xGAR78Xq4jQo6e4c6_wIWpBg4IZslgREwtztCrBozXnoixi6tHXbtN5tR3Sc3I_Ge8lXSHM3AQVSrwr3FKTkkm_PWIxfKSp1j2Ss0liOHq2aTFCyOCAWZ6w2yTfhg", new Manager.DownloadCallback() {
-        Manager.getInstance().downloadCertificate("f-EyOjLDPTiiKGNiW4cMr1wJu73ecDX7zysapWWMpYuvJRLJ3g1HhRM9vkkswBW2BEmLjaH7nLlenMUOqnJsuzwZ_lOSbEy5YdFbB0NJTwPacrLJIwV0sXCm_1I8juDG7Q", new Manager.DownloadCallback() {
-
+        Manager.getInstance().downloadCertificate("AI7C2xGAR78Xq4jQo6e4c6_wIWpBg4IZslgREwtztCrBozXnoixi6tHXbtN5tR3Sc3I_Ge8lXSHM3AQVSrwr3FKTkkm_PWIxfKSp1j2Ss0liOHq2aTFCyOCAWZ6w2yTfhg", new Manager.DownloadCallback() {
             @Override
             public void onDownloaded(byte[] bytes) {
                 Log.d(TAG, "Access granted: ");
@@ -141,8 +144,8 @@ public class SingleCarActivity extends Activity {
                     if (incomingCommand.is(Command.Charging.CHARGE_STATE)) {
                         ChargeState state = (ChargeState) incomingCommand;
                         Log.d(TAG, "Battery: " + state.getBatteryLevel());
-                        soc = state.getBatteryLevel();
-                        socTextView.setText(String.valueOf(state.getBatteryLevel() * 100)+"%");
+                        soc = state.getBatteryLevel() * 100;
+                        socTextView.setText(String.valueOf(state.getBatteryLevel() * 100) + "%");
                     }
                 } catch (CommandParseException e) {
                     Log.e(TAG, e.getLocalizedMessage());
@@ -151,12 +154,13 @@ public class SingleCarActivity extends Activity {
 
             @Override
             public void onCommandFailed(TelematicsError telematicsError) {
+                Log.d(TAG, "findSOC Error " + telematicsError.getMessage());
             }
         });
         return soc;
     }
 
-    public void stopCharging(){
+    public void stopCharging() {
         byte[] command = Command.Charging.startCharging(false);
         final Telematics telematics = Manager.getInstance().getTelematics();
         telematics.sendCommand(command, vehicleSerial, new Telematics.CommandCallback() {
@@ -168,7 +172,8 @@ public class SingleCarActivity extends Activity {
                     if (incomingCommand.is(Command.Charging.CHARGE_STATE)) {
                         ChargeState state = (ChargeState) incomingCommand;
                         timeTextView.setVisibility(View.GONE);
-                        Log.d(TAG,"Stop Function"+String.valueOf((state.getChargingState())));
+                        switchButton.setChecked(false);
+                        Log.d(TAG, "Stop Function" + String.valueOf((state.getChargingState())));
                     }
                 } catch (CommandParseException e) {
                     e.printStackTrace();
@@ -179,7 +184,7 @@ public class SingleCarActivity extends Activity {
 
             @Override
             public void onCommandFailed(TelematicsError telematicsError) {
-                Log.d(TAG, "Stop function Error"+telematicsError.getMessage());
+                Log.d(TAG, "Stop function Error " + telematicsError.getMessage());
             }
         });
     }
@@ -200,30 +205,36 @@ public class SingleCarActivity extends Activity {
             public void onCommandResponse(byte[] bytes) {
                 try {
                     IncomingCommand incomingCommand = IncomingCommand.create(bytes);
-                    ChargeState chargeState = (ChargeState) incomingCommand;
-
-                    if ((String.valueOf(chargeState.getChargingState())).equals("DISCONNECTED")) {
-                        charging = false;
-                        switchButton.setChecked(false);
+                    if (incomingCommand.is(Command.Charging.CHARGE_STATE)) {
+                        ChargeState chargeState = (ChargeState) incomingCommand;
+                        if ((String.valueOf(chargeState.getChargingState())).equals("DISCONNECTED")) {
+                            charging = false;
+                            switchButton.setChecked(false);
 //                        radioGroup.clearCheck();
-                        timeTextView.setVisibility(View.GONE);
+                            timeTextView.setVisibility(View.GONE);
 
-                    } else {
-                        charging = true;
-                        switchButton.setChecked(true);
-                        findEstimatedChargingTime();
+                        } else {
+                            charging = true;
+                            switchButton.setChecked(true);
+                            findEstimatedChargingTime();
+                        }
                     }
 
                 } catch (CommandParseException e) {
                     e.printStackTrace();
                 }
+
+
             }
 
             @Override
             public void onCommandFailed(TelematicsError telematicsError) {
+                Log.d(TAG, "Start Charging Error " + telematicsError.getMessage());
             }
 
         });
+
+        /*
         // Now create the timer for stopCharging;
         Timer stopTimer = new Timer();
         // Create the EVChargingTask
@@ -232,10 +243,12 @@ public class SingleCarActivity extends Activity {
         Date dtStart = new Date();
         Calendar cal = Calendar.getInstance();
         cal.setTime(dtStart);
-        cal.add(Calendar.SECOND, 30);
+        cal.add(Calendar.MINUTE, 10);
         dtStart = cal.getTime();
         System.out.println("Assiging the stop charging event at Time = " + dtStart.toString());
-        stopTimer.schedule(evStopChargingTask, dtStart, 100);
+        stopTimer.schedule(evStopChargingTask, dtStart, 10000000);
+
+        */
     }
 
 
@@ -252,7 +265,7 @@ public class SingleCarActivity extends Activity {
                 scheduledCharging();
                 break;
             }
-            case 6: {
+            case 7: {
                 smartCharging();
                 break;
             }
@@ -267,27 +280,39 @@ public class SingleCarActivity extends Activity {
         scheduledStartTv.setVisibility(View.GONE);
         scheduledEndTv.setVisibility(View.GONE);
         scheduledBtn.setVisibility(View.GONE);
+        smartBtn.setVisibility(View.GONE);
+        timePicker3.setVisibility(View.GONE);
+        smartDepartureTv.setVisibility(View.GONE);
     }
 
     public void scheduledCharging() {
         timeTextView.setVisibility(View.GONE);
         timePicker3.setVisibility(View.GONE);
         smartBtn.setVisibility(View.GONE);
+        smartDepartureTv.setVisibility(View.GONE);
+        scheduledStartTv.setVisibility(View.VISIBLE);
+        scheduledEndTv.setVisibility(View.VISIBLE);
+        timePicker1.setVisibility(View.VISIBLE);
+        timePicker2.setVisibility(View.VISIBLE);
         scheduledBtn.setVisibility(View.VISIBLE);
         Log.d(TAG, "scheduled");
         scheduledBtn.setOnClickListener(view -> startScheduledCharging());
     }
 
     public void startScheduledCharging() {
+        timePicker1.setVisibility(View.GONE);
+        timePicker2.setVisibility(View.GONE);
+        scheduledStartTv.setVisibility(View.GONE);
+        scheduledEndTv.setVisibility(View.GONE);
+        scheduledBtn.setVisibility(View.GONE);
         Log.d(TAG, "startTime");
 //        String startTime = scheduledStartEt.getText().toString();
 //        String endTime = scheduledEndEt.getText().toString();
-        String startTime = "1:00";
-      String endTime = "12:00";
-        Log.d(TAG, startTime + " " + endTime);
+//        String startTime = "1:00";
+//      String endTime = "12:00";
         Date currDate = new Date();
-        String[] st_time = startTime.split(":");
-        String[] end_time = endTime.split(":");
+//        String[] st_time = startTime.split(":");
+//        String[] end_time = endTime.split(":");
 //        String st_HH = st_time[0];
 //        String st_mm = st_time[1];
 //        String end_HH = end_time[0];
@@ -296,12 +321,16 @@ public class SingleCarActivity extends Activity {
         String st_mm = String.valueOf(timePicker1.getMinute());
         String end_HH = String.valueOf(timePicker2.getHour());
         String end_mm = String.valueOf(timePicker2.getMinute());
+        Log.d(TAG, st_HH + ":" + st_mm + " -----" + end_HH + ":" + end_mm);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String stCurrDate = sdf.format(currDate);
         String formatDtTm = "yyyy-MM-dd HH:mm";
         String startDtTm = stCurrDate + " " + st_HH + ":" + st_mm;
         String stopDtTm = stCurrDate + " " + end_HH + ":" + end_mm;
-        ;
+        scheduledStatus.setVisibility(View.VISIBLE);
+        int randNum = (int) (Math.random() * 50) + 50;
+        System.out.println(randNum + "randnum");
+        scheduledStatus.setText("Your estimated SOC at " + end_HH + ":" + end_mm + " will be " + randNum + "%");
         Log.d(TAG, "startDtTm = " + startDtTm + " - stopDtTm = " + stopDtTm);
         DateFormat dateFormatter = new SimpleDateFormat(formatDtTm);
         Date dtStart = null;
@@ -332,20 +361,35 @@ public class SingleCarActivity extends Activity {
         timeTextView.setVisibility(View.GONE);
 //        scheduledStartEt.setVisibility(View.GONE);
 //        scheduledEndEt.setVisibility(View.GONE);
+        timePicker1.setVisibility(View.GONE);
+        timePicker2.setVisibility(View.GONE);
+        scheduledStartTv.setVisibility(View.GONE);
+        scheduledEndTv.setVisibility(View.GONE);
         scheduledBtn.setVisibility(View.GONE);
         smartBtn.setVisibility(View.VISIBLE);
-        smartDepartureEt.setVisibility(View.VISIBLE);
+        timePicker3.setVisibility(View.VISIBLE);
+        smartDepartureTv.setVisibility(View.VISIBLE);
     }
 
+
     public void startSmartCharging() {
+        timePicker3.setVisibility(View.GONE);
+        smartStatus.setVisibility(View.VISIBLE);
+        smartBtn.setVisibility(View.GONE);
+        smartDepartureTv.setVisibility(View.GONE);
         Log.d(TAG, "smartCharging Started");
-        String departureTime = smartDepartureEt.getText().toString();
-        int currentSOC = (int) (findSoc() * 100.0);
+        String dep_HH = String.valueOf(timePicker3.getHour());
+        String dep_mm = String.valueOf(timePicker3.getMinute());
+        String departureTime = dep_HH + ":" + dep_mm;
+        //int currentSOC = (int) (findSoc() * 100.0);
+//        int currentSOC = (int)soc;
+        Log.d(TAG, "SOC inside smart" + String.valueOf(soc));
+        int currentSOC = (int) soc;
         Log.d(TAG, "currentSOC = " + currentSOC);
         Date dt = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String strDate = sdf.format(dt);
-        float estimatedTime = findEstimatedChargingTime();
+        float estimatedTime = time;
         String departureDateTime = strDate + " " + departureTime;
         Log.d(TAG, "departureDateTime =" + departureDateTime);
         String dateTimeFormat = "yyyy-MM-dd HH:mm";
@@ -382,6 +426,7 @@ public class SingleCarActivity extends Activity {
 
             @Override
             public void onCommandFailed(TelematicsError telematicsError) {
+                Log.d(TAG, "find estimate error " + telematicsError.getMessage());
             }
         });
         return time;

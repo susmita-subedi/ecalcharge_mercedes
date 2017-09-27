@@ -3,22 +3,31 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/back"
                 >
+
     <Button
         android:id="@+id/singleCarBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="198dp"
+        android:text="@string/car_owner"
+        android:textColor="#ffff"
+        android:backgroundTint="@color/blue"
+        android:layout_marginStart="19dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="156dp"
-        android:text="@string/car_owner"/>
+        android:layout_alignParentStart="true"/>
 
     <Button
         android:id="@+id/fleetBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:text="@string/fleet_manager"
-        android:layout_below="@+id/singleCarBtn"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="65dp"/>
+        android:textColor="#ffff"
+        android:backgroundTint="@color/blue"
+        android:padding="2dp"
+        android:paddingHorizontal="2dp"
+        android:layout_marginBottom="37dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/singleCarBtn"/>
 </RelativeLayout>
